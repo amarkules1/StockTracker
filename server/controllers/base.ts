@@ -9,7 +9,15 @@ abstract class BaseCtrl {
       res.status(200).json(docs);
     });
   }
-
+  //get all matching
+  
+  getAllMatching = (req, res) => {
+    this.model.find({}, (err, docs) => {
+      if (err) { return console.error(err); }
+      res.status(200).json(docs);
+    });
+  }
+  
   // Count all
   count = (req, res) => {
     this.model.count((err, count) => {
@@ -38,6 +46,38 @@ abstract class BaseCtrl {
     this.model.findOne({ _id: req.params.id }, (err, item) => {
       if (err) { return console.error(err); }
       res.status(200).json(item);
+    });
+  }
+
+  //get by username
+  getByName = (req, res) => {
+    this.model.findOne({ username: req.params.id }, (err, item) => {
+      if (err) { return console.error(err); }
+      res.status(200).json(item);
+    });
+  }
+  
+  getByUName = (req, res) => {
+    this.model.find({ user: req.params.id }, (err, item) => {
+      if (err) { return console.error(err); }
+      res.status(200).json(item);
+    });
+  }
+
+  getPrice = (req, res) => {
+    const https = require('https');
+    https.get('https://api.iextrading.com/1.0/stock/' + req.params.id + '/quote', resp => {
+      let data = '';
+      resp.on('data', (chunk) => { data += chunk; });
+      resp.on('end', () => {
+        data = JSON.parse(data);
+        data['index'] = req.params.index;
+        console.log(data);
+        res.status(200).json(data);
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
     });
   }
 

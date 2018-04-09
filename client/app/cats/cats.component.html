@@ -3,27 +3,34 @@
 <app-toast [message]="toast.message"></app-toast>
 
 <div class="card mb-3" *ngIf="!isLoading">
-  <h4 class="card-header">Current cats ({{cats.length}})</h4>
+  <h4 class="card-header">Current Items ({{cats.length}})</h4>
   <div class="card-body">
-    <table class="table table-bordered">
+    
+	<table class="table table-bordered">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Age</th>
-          <th scope="col">Weight</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Shares</th>
+          <th scope="col">Buy Price</th>
+          <th scope="col">Total Cost</th>
+          <th scope="col">Current Price</th>
+          <th scope="col">Total Value</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody *ngIf="cats.length === 0">
         <tr>
-          <td colspan="4">There are no cats in the DB. Add a new cat below.</td>
+          <td colspan="7">Your portfolio is empty. Add a new item below.</td>
         </tr>  
       </tbody>
       <tbody *ngIf="!isEditing">
         <tr *ngFor="let cat of cats">
           <td>{{cat.name}}</td>
-          <td>{{cat.age}}</td>
-          <td>{{cat.weight}}</td>
+          <td>{{cat.shares}}</td>
+          <td>{{cat.boughtAt}}</td>
+          <td>{{cat.shares * cat.boughtAt}}</td>
+          <td>{{cat.value}}</td>
+          <td>{{cat.value * cat.shares}}</td>
           <td>
             <button class="btn btn-sm btn-primary" (click)="enableEditing(cat)"><i class="fa fa-pencil"></i> Edit</button> 
             <button class="btn btn-sm btn-danger" (click)="deleteCat(cat)"><i class="fa fa-trash"></i> Delete</button>
@@ -34,9 +41,9 @@
         <tr>
           <td colspan="4">
             <form class="form-inline" #form="ngForm" (ngSubmit)="editCat(cat)">
-              <input class="form-control mr-2" type="text" name="name" [(ngModel)]="cat.name" placeholder="Name" required>
-              <input class="form-control mr-2" type="number" name="age" [(ngModel)]="cat.age" placeholder="Age" min="0" required>
-              <input class="form-control mr-2" type="number" name="weight" [(ngModel)]="cat.weight" placeholder="Weight" step="any" min="0" required>
+              <input class="form-control mr-2" type="text" name="name" [(ngModel)]="cat.name" placeholder="Stock" required>
+              <input class="form-control mr-2" type="number" step="1" name="shares" [(ngModel)]="cat.shares" placeholder="Shares" required>
+              <input class="form-control mr-2" type="number" step="any" name="site" [(ngModel)]="cat.boughtAt" placeholder="Buy Price" required>
               <button class="btn btn-sm btn-primary mr-2" type="submit" [disabled]="!form.form.valid"><i class="fa fa-floppy-o"></i> Save</button>
               <button class="btn btn-sm btn-warning" (click)="cancelEditing()"><i class="fa fa-times"></i> Cancel</button>
             </form>
@@ -46,15 +53,23 @@
     </table>
   </div>
 </div>
-
 <div class="card" *ngIf="!isEditing">
-  <h4 class="card-header">Add new cat</h4>
+  <h4 class="card-header">Add new Stock Position</h4>
   <div class="card-body">
     <form class="form-inline" [formGroup]="addCatForm" (ngSubmit)="addCat()">
-      <input class="form-control mr-2" type="text" name="name" formControlName="name" placeholder="Name">
-      <input class="form-control mr-2" type="number" name="weight" formControlName="weight" placeholder="Weight" step="any" min="0">
-      <input class="form-control mr-2" type="number" name="age" formControlName="age" placeholder="Age" min="0">
+      <input class="form-control mr-2" type="text" name="name" formControlName="name" placeholder="Stock">
+      <input class="form-control mr-2" type="number" step="1" name="shares" formControlName="shares" placeholder="Shares">
+      <input class="form-control mr-2" type="number" step="any" name="boughtAt" formControlName="boughtAt" placeholder="Buy Price">
       <button class="btn btn-primary" type="submit" [disabled]="!addCatForm.valid"><i class="fa fa-floppy-o"></i> Add</button>
     </form>
+  </div>
+</div>
+
+<div class="card">
+  <h4 class="card-header">Graph</h4>
+  <div class="card-body">
+    <canvas id="ctx"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js">
+    </script><script>console.log('a');</script>
   </div>
 </div>

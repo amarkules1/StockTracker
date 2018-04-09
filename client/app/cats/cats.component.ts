@@ -5,44 +5,61 @@ import { CatService } from '../services/cat.service';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { Cat } from '../shared/models/cat.model';
 
+
 @Component({
   selector: 'app-cats',
   templateUrl: './cats.component.html',
   styleUrls: ['./cats.component.css']
 })
-export class CatsComponent implements OnInit {
 
+export class CatsComponent implements OnInit {
+  
   cat = new Cat();
   cats: Cat[] = [];
   isLoading = true;
   isEditing = false;
+  
 
   addCatForm: FormGroup;
   name = new FormControl('', Validators.required);
-  age = new FormControl('', Validators.required);
-  weight = new FormControl('', Validators.required);
-
+  shares = new FormControl('', Validators.required);
+  boughtAt = new FormControl('', Validators.required);
+  user = new FormControl('');
   constructor(private catService: CatService,
               private formBuilder: FormBuilder,
               public toast: ToastComponent) { }
 
   ngOnInit() {
     this.getCats();
+    
+	let user1 = document.getElementById("getUserFrom").innerHTML.split('(')[1];
+	user1 = user1.split(')')[0];
     this.addCatForm = this.formBuilder.group({
       name: this.name,
-      age: this.age,
-      weight: this.weight
+      shares: this.shares,
+      boughtAt: this.boughtAt,
+	  user: user1
     });
+    //this.cats = <Cat[]> this.getPrices(this.cats);
+    //console.log(this.cats[0]);
   }
 
   getCats() {
-    this.catService.getCats().subscribe(
-      data => this.cats = data,
+    let user = document.getElementById("getUserFrom").innerHTML.split('(')[1];
+    user = user.split(')')[0];
+    this.catService.getCats(user).subscribe(
+      data => {
+      this.cats = data;
+      console.log(this.cats);
+      },
       error => console.log(error),
-      () => this.isLoading = false
+      () => {
+        this.getPrices(this.cats);
+        this.isLoading = false
+      }
     );
   }
-
+  
   addCat() {
     this.catService.addCat(this.addCatForm.value).subscribe(
       res => {
@@ -52,6 +69,18 @@ export class CatsComponent implements OnInit {
       },
       error => console.log(error)
     );
+  }
+
+  getPrices(Cats: Cat[]): any {
+    for (var i = 0; i < Cats.length; i++) {
+      this.catService.getPrice(Cats[i].name, i).subscribe(
+        data => {
+          this.cats[data['index']].value = data['latestPrice'];
+        },
+        error => console.log(error),
+        () => this.isLoading = false
+      );
+    }
   }
 
   enableEditing(cat: Cat) {
@@ -78,6 +107,8 @@ export class CatsComponent implements OnInit {
     );
   }
 
+
+  
   deleteCat(cat: Cat) {
     if (window.confirm('Are you sure you want to permanently delete this item?')) {
       this.catService.deleteCat(cat).subscribe(

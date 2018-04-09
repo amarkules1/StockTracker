@@ -8,9 +8,15 @@ import { Cat } from '../shared/models/cat.model';
 export class CatService {
 
   constructor(private http: HttpClient) { }
+//figure out how to add username here
+  getCats(userName): Observable<Cat[]> {
+    return this.http.get<Cat[]>('/api/cats/' + userName);
+  }
 
-  getCats(): Observable<Cat[]> {
-    return this.http.get<Cat[]>('/api/cats');
+  getPrice(name, i): Observable<number> {
+    var data = this.http.get<number>('/api/cats/price/' + name +'/' + i);
+    console.log(data);
+    return data;
   }
 
   countCats(): Observable<number> {
@@ -18,6 +24,7 @@ export class CatService {
   }
 
   addCat(cat: Cat): Observable<Cat> {
+	  console.log(cat);
     return this.http.post<Cat>('/api/cat', cat);
   }
 

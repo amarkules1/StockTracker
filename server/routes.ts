@@ -14,11 +14,13 @@ export default function setRoutes(app) {
 
   // Cats
   router.route('/cats').get(catCtrl.getAll);
+  router.route('/cats/:id').get(catCtrl.getByUName);
   router.route('/cats/count').get(catCtrl.count);
   router.route('/cat').post(catCtrl.insert);
   router.route('/cat/:id').get(catCtrl.get);
   router.route('/cat/:id').put(catCtrl.update);
   router.route('/cat/:id').delete(catCtrl.delete);
+  router.route('/cats/price/:id/:index').get(catCtrl.getPrice);
 
   // Users
   router.route('/login').post(userCtrl.login);
@@ -26,6 +28,7 @@ export default function setRoutes(app) {
   router.route('/users/count').get(userCtrl.count);
   router.route('/user').post(userCtrl.insert);
   router.route('/user/:id').get(userCtrl.get);
+  router.route('/user/byName/:id').get(userCtrl.getByName);
   router.route('/user/:id').put(userCtrl.update);
   router.route('/user/:id').delete(userCtrl.delete);
 
