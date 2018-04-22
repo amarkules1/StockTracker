@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { CatService } from '../services/cat.service';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { Cat } from '../shared/models/cat.model';
-
+declare var d3: any;
 
 @Component({
   selector: 'app-cats',
@@ -72,15 +72,57 @@ export class CatsComponent implements OnInit {
   }
 
   getPrices(Cats: Cat[]): any {
-    for (var i = 0; i < Cats.length; i++) {
+    let len = Cats.length;
+    this.cats.push(new Cat());
+    this.cats[len].name = "TOTAL";
+    this.cats[len].index = len;
+    this.cats[len].boughtAt = 0;
+    this.cats[len].value = 0;
+    this.cats[len].shares = 1;
+    for (var i = 0; i < len; i++) {
+      this.cats[i].index = i;
       this.catService.getPrice(Cats[i].name, i).subscribe(
         data => {
           this.cats[data['index']].value = data['latestPrice'];
+          this.cats[data['index']].index = data['index'];
+          this.cats[len].value += data['latestPrice'] * this.cats[data['index']].shares;
+          this.cats[len].boughtAt += this.cats[data['index']].boughtAt * this.cats[data['index']].shares;
+          this.genGraph(this.cats[data['index']]);
+          if (i === Cats.length - 1) { setTimeout(this.genGraph(this.cats[len]),500); }
+
         },
         error => console.log(error),
         () => this.isLoading = false
       );
     }
+    
+
+  }
+
+  round(num: number): number {
+    return Math.round(num * 100) / 100;
+  }
+
+  genGraph(cat: Cat) {
+    let dataArray = [this.round(cat.boughtAt), this.round(cat.value)];
+    console.log(dataArray);
+    let graphID = "#graph" + cat.index;
+    let svg = d3.select(graphID);
+    console.log(svg);
+    svg.selectAll("rect")
+      .data(dataArray)
+      .enter().append("rect")
+      .attr("style", "fill:#007bff")
+      .attr("height", function (d, i) { return (d / cat.boughtAt) * 200 })
+      .attr("width", "80")
+      .attr("x", function (d, i) { return (i * 120) + 25 })
+      .attr("y", function (d, i) { return 300 - ((d / cat.boughtAt) * 200) });
+    svg.selectAll("text")
+      .data(dataArray)
+      .enter().append("text")
+      .text(function (d) { return d; })
+      .attr("x", function (d, i) { return (i * 120) + 25 })
+      .attr("y", function (d, i) { return 315 - ((d / cat.boughtAt) * 200) });
   }
 
   enableEditing(cat: Cat) {

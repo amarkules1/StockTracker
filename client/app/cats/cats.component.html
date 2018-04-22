@@ -5,8 +5,8 @@
 <div class="card mb-3" *ngIf="!isLoading">
   <h4 class="card-header">Current Items ({{cats.length}})</h4>
   <div class="card-body">
-    
-	<table class="table table-bordered">
+
+    <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
           <th scope="col">Stock</th>
@@ -21,7 +21,7 @@
       <tbody *ngIf="cats.length === 0">
         <tr>
           <td colspan="7">Your portfolio is empty. Add a new item below.</td>
-        </tr>  
+        </tr>
       </tbody>
       <tbody *ngIf="!isEditing">
         <tr *ngFor="let cat of cats">
@@ -32,10 +32,10 @@
           <td>{{cat.value}}</td>
           <td>{{cat.value * cat.shares}}</td>
           <td>
-            <button class="btn btn-sm btn-primary" (click)="enableEditing(cat)"><i class="fa fa-pencil"></i> Edit</button> 
+            <button class="btn btn-sm btn-primary" (click)="enableEditing(cat)"><i class="fa fa-pencil"></i> Edit</button>
             <button class="btn btn-sm btn-danger" (click)="deleteCat(cat)"><i class="fa fa-trash"></i> Delete</button>
           </td>
-        </tr>  
+        </tr>
       </tbody>
       <tbody *ngIf="isEditing">
         <tr>
@@ -65,11 +65,10 @@
   </div>
 </div>
 
-<div class="card">
-  <h4 class="card-header">Graph</h4>
+<div class="card" *ngFor="let cat of cats">
+  <h4 class="card-header">{{cat.name}}: ${{cat.value}}</h4>
   <div class="card-body">
-    <canvas id="ctx"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js">
-    </script><script>console.log('a');</script>
+    <svg width="400" height="300" id="graph{{cat.index}}"></svg>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bought At&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Value</p>
   </div>
 </div>

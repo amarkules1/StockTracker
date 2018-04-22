@@ -5,4 +5,5 @@ export class Cat {
   boughtAt?: number;
   user?: string;
   value?: number;
+  index?: number;
 }
