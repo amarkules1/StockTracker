@@ -1,0 +1,87 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>{{ 'LIST_MASTER_TITLE' | translate }}</ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="addItem()">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <div class="card mb-3" *ngIf="!isLoading">
+    <h4 class="card-header">Current Items ({{cats.length}})</h4>
+    <div class="card-body">
+
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Stock</th>
+            <th scope="col">Shares</th>
+            <th scope="col">Buy Price</th>
+            <th scope="col">Total Cost</th>
+            <th scope="col">Current Price</th>
+            <th scope="col">Total Value</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="cats.length === 0">
+          <tr>
+            <td colspan="7">Your portfolio is empty. Add a new item below.</td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="!isEditing">
+          <tr *ngFor="let cat of cats">
+            <td>{{cat.name}}</td>
+            <td>{{cat.shares}}</td>
+            <td>{{cat.boughtAt}}</td>
+            <td>{{cat.shares * cat.boughtAt}}</td>
+            <td>{{cat.value}}</td>
+            <td>{{cat.value * cat.shares}}</td>
+            <td>
+              <button class="btn btn-sm btn-primary" (click)="enableEditing(cat)"><i class="fa fa-pencil"></i> Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteCat(cat)"><i class="fa fa-trash"></i> Delete</button>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="isEditing">
+          <tr>
+            <td colspan="4">
+              <form class="form-inline" #form="ngForm" (ngSubmit)="editCat(cat)">
+                <input class=" mr-2" type="text" name="name" [(ngModel)]="cat.name" placeholder="Stock" required>
+                <input class=" mr-2" type="number" step="1" name="shares" [(ngModel)]="cat.shares" placeholder="Shares" required>
+                <input class=" mr-2" type="number" step="any" name="site" [(ngModel)]="cat.boughtAt" placeholder="Buy Price" required>
+                <button class="btn btn-sm btn-primary mr-2" type="submit"><i class="fa fa-floppy-o"></i> Save</button>
+                <button class="btn btn-sm btn-warning" (click)="cancelEditing()"><i class="fa fa-times"></i> Cancel</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card" *ngIf="!isEditing">
+    <h4 class="card-header">Add new Stock Position</h4>
+    <div class="card-body">
+      <form class="form-inline" (ngSubmit)="addCat()">
+        <input class=" mr-2" type="text" name="name" placeholder="Stock" id="addName">
+        <input class="mr-2" type="number" step="1" name="shares" placeholder="Shares" id="addShares">
+        <input class="mr-2" type="number" step="any" name="boughtAt" placeholder="Buy Price" id="addPrice">
+        <button class="btn btn-primary" type="submit" ><i class="fa fa-floppy-o"></i> Add</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card" *ngFor="let cat of cats">
+    <h4 class="card-header">{{cat.name}}: ${{cat.value}}</h4>
+    <div class="card-body">
+      <svg width="400" height="300" id="graph{{cat.index}}"></svg>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bought At&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Value</p>
+    </div>
+  </div>
+</ion-content>

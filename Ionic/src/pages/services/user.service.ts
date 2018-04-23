@@ -14,8 +14,7 @@ export class UserService {
   }
 
   login(credentials): Observable<any> {
-    alert(credentials.password + "," + credentials.email);
-    return this.http.post<any>('/api/login', credentials);
+    return this.http.post<any>('http://18.216.107.92:3000/api/login', credentials);
   }
 
   getUsers(): Observable<User[]> {
@@ -43,3 +42,4 @@ export class UserService {
   }
 
 }
+
